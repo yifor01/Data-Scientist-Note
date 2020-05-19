@@ -3,13 +3,14 @@ Data Scientist Note
 
 ###### tags: `NLP` `Machine Learning`
 # Topic List
-::info
+:::info
 - **System:** Os
 - **Plot:** Matplotlib, Seaborn
 - **Data Frame:** Pandas, Numpy
 - **NLP:** Jieba, Seaborn
 - **Crawl:** Request, Bs4, Selenium
 - **Algorithm** 
+:::
 
 ## System
 - 執行command line
@@ -134,40 +135,9 @@ Data Scientist Note
         except:
             return None  
     ```
-
-
-
-
-
-
-
 ## Algorithm
 - List search
     ```{python}
     from itertools import izip as zip, count
     [i for i, j in zip(count(), [‘foo’, ‘bar’, ‘baz’]) if j == ‘bar’]
     ```
-      
-
-
-
-
-
-
-
-<!--:mag: Sprint Retro
----
-##################################################################################################
-### What we can start Doing
-- New initiatives and experiments we want to start improving
-
-
-
-:closed_book: Tasks
---
-==Importance== (1 - 5) / Name / **Estimate** (1, 2, 3, 5, 8, 13)
-### Development Team:
-- [ ] ==5== Email invite
-  - [x] ==4== Email registration page **5**
-  - [ ] ==5== Email invitees **3**
-- [ ] ==4== Setup e2e test in production **2**-->
