@@ -10,6 +10,7 @@ Data Scientist Note
 - **NLP:** Jieba, Seaborn
 - **Crawl:** Request, Bs4, Selenium
 - **Algorithm** 
+- **Docker** 
 :::
 
 ## System
@@ -24,20 +25,18 @@ Data Scientist Note
 ## Plot
 - 繪圖區顏色調整(黑暗模式用)
     ```python
-    plt.rc_context({'axes.edgecolor':'orange','xtick.color':'red', 
-                    'ytick.color':'green', 'figure.facecolor':'white'})
+     plt.rc_context({'axes.edgecolor':'orange','xtick.color':'red', 
+                        'ytick.color':'green', 'figure.facecolor':'white'})
     ```
 - 座標label旋轉
   ```python
   plt.xticks(rotation=45)
   ```
-  
 - [plt中文亂碼 & 負號消失](https://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/359974/)
     ```python
     plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
     plt.rcParams['axes.unicode_minus'] = False
     ```
-
 - plt中文亂碼(進階Linux)
     - [simsun字體下載](http://www.font5.com.cn/zitixiazai/1/150.html)
         ```python
@@ -66,7 +65,16 @@ Data Scientist Note
     np.set_printoptions(precision=2)
     ```
 ## NLP
-* [jieba詞性表](http://blog.pulipuli.info/2017/11/fasttag-identify-part-of-speech-in.html)
+#### NLP Reference
+* [Jieba詞性表](http://blog.pulipuli.info/2017/11/fasttag-identify-part-of-speech-in.html)
+* [中文任務benchmarks：CLUE](https://www.cluebenchmarks.com/rank.html)
+* [中文任務BERT Pre-Train Model](https://github.com/ymcui/Chinese-BERT-wwm)
+* [BERT colab](https://colab.research.google.com/github/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
+)
+
+
+
+#### Data Processing
 - 全形轉半形
     ```python
     def full2half(s):
@@ -142,4 +150,11 @@ Data Scientist Note
     ```python
     from itertools import izip as zip, count
     [i for i, j in zip(count(), [‘foo’, ‘bar’, ‘baz’]) if j == ‘bar’]
+    ```
+
+## Docker
+- build tf enviroment with GPU and Jupyter
+    ```docker
+    docker run --runtime=nvidia -d -p 27390:8888 -v "$(pwd)"/myfile:/tf --name tf_rnn tensorflow/tensorflow:latest-gpu-py3-jupyter 
+    docker exec tf_rnn jupyter notebook list # get jupyter token
     ```
