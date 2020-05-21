@@ -91,6 +91,7 @@ Data Scientist Note
     ```
 - 清除表情符號
     ```python
+    import emoji
     def give_emoji_free_text(text):
         allchars = [str for str in text]
         emoji_list = [c for c in allchars if c in emoji.UNICODE_EMOJI]
