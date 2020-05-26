@@ -4,13 +4,7 @@ Data Scientist Note
 ###### tags: `NLP` `Machine Learning`
 # Topic List
 :::info
-- **System:** Os
-- **Plot:** Matplotlib, Seaborn
-- **Data Frame:** Pandas, Numpy
-- **NLP:** Jieba, Seaborn
-- **Crawl:** Request, Bs4, Selenium
-- **Algorithm** 
-- **Docker** 
+[TOC]
 :::
 
 ## System
@@ -22,6 +16,17 @@ Data Scientist Note
     ```python
     os.startfile('doc.txt')
     ```
+- UnicodeEncodeError
+    ```python
+    PYTHONIOENCODING=utf-8 python [python file]
+    ```
+- autopep8 in place (command line)
+    ```python
+    # To modify a file in place
+    autopep8 --in-place --aggressive --aggressive <filename>
+
+    ```
+
 ## Plot
 - 繪圖區顏色調整(黑暗模式用)
     ```python
@@ -48,6 +53,7 @@ Data Scientist Note
 * 簡體編碼 ： `GB 2312`
 - 儲存csv中文亂碼
     ```python
+    # 僅csv 可用dtype={'A':str}
     df.to_csv('XXXX.csv',encoding='utf_8_sig',index=False)
     df.to_excel('XXXX.xlsx',encoding='utf_8_sig',index=False)
     ```
@@ -64,13 +70,55 @@ Data Scientist Note
     ```python
     np.set_printoptions(precision=2)
     ```
+#### Tricks
+- pandas 抽樣 (without replace)
+    ```python
+    # 設定frac=1為重排序
+    df.sample(frac=0.8).reset_index(drop=True) 
+    ```  
+- pandas 降低記憶體使用量
+    ```python
+    def reduce_mem_usage(df, verbose=True):
+        numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+        start_mem = df.memory_usage().sum() / 1024**2    
+        for col in df.columns:
+            col_type = df[col].dtypes
+            if col_type in numerics:
+                c_min = df[col].min()
+                c_max = df[col].max()
+                if str(col_type)[:3] == 'int':
+                    if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                        df[col] = df[col].astype(np.int8)
+                    elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+                        df[col] = df[col].astype(np.int16)
+                    elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                        df[col] = df[col].astype(np.int32)
+                    elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
+                        df[col] = df[col].astype(np.int64)  
+                else:
+                    if c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
+                        df[col] = df[col].astype(np.float16)
+                    elif c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
+                        df[col] = df[col].astype(np.float32)
+                    else:
+                        df[col] = df[col].astype(np.float64)    
+        end_mem = df.memory_usage().sum() / 1024**2
+        if verbose: print('Mem. usage decreased to {:5.2f} Mb ({:.1f}% reduction)'.format(end_mem, 100 * (start_mem - end_mem) / start_mem))
+        return df
+    ```  
+
+
+
 ## NLP
 #### NLP Reference
+* [PyTorch cheat sheet](https://hackmd.io/@rh0jTfFDTO6SteMDq91tgg/HkDRHKLrU)
+* [PyTorch 中文教程](https://pytorch.apachecn.org/docs/1.2/)
 * [Jieba詞性表](http://blog.pulipuli.info/2017/11/fasttag-identify-part-of-speech-in.html)
+* [MONPA 罔拍繁體中文斷詞](https://github.com/monpa-team/monpa)
 * [中文任務benchmarks：CLUE](https://www.cluebenchmarks.com/rank.html)
 * [中文任務BERT Pre-Train Model](https://github.com/ymcui/Chinese-BERT-wwm)
 * [BERT colab](https://colab.research.google.com/github/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
-)
+) (不適用tf2)
 
 
 
@@ -111,12 +159,12 @@ Data Scientist Note
         fil = re.compile(r"[^0-9a-zA-Z\u4e00-\u9fa5，：？！。《》()『』「」,。【】▶%＞＜#；+-—“”:?!、<>]+", re.UNICODE)
         return fil.sub(' ', raw)
     ```
-## Crawl
-- 抓取代理
+## Crawling
+- 抓取代理伺服器
     ```python
     import requests
     from bs4 import BeautifulSoup
-    def _get_proxies(proxy_num):
+    def _get_proxies(proxy_num=10):
           res = requests.get('http://cn-proxy.com/archives/218')
           res.encoding = 'utf-8'
           soup = BeautifulSoup(res.text)
@@ -158,4 +206,8 @@ Data Scientist Note
     ```docker
     docker run --runtime=nvidia -d -p 27390:8888 -v "$(pwd)"/myfile:/tf --name tf_rnn tensorflow/tensorflow:latest-gpu-py3-jupyter 
     docker exec tf_rnn jupyter notebook list # get jupyter token
+    ```
+- build pytorch enviroment with GPU
+    ```docker
+    docker run --runtime=nvidia -it -p 12222:8888 -p 16666:6006 -v "$(pwd)"/torch:/workspace --name howard_torch pytorch/pytorch:1.0-cuda10.0-cudnn7-devel 
     ```
