@@ -216,5 +216,3 @@ Data Scientist Note
     ```docker
     docker run --runtime=nvidia -it -p 12222:8888 -p 16666:6006 -v "$(pwd)"/torch:/workspace --name howard_torch pytorch/pytorch:1.0-cuda10.0-cudnn7-devel 
     ```
-    
-    
