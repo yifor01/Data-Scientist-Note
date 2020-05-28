@@ -20,7 +20,7 @@ Data Scientist Note
     ```python
     PYTHONIOENCODING=utf-8 python [python file]
     ```
-- autopep8 in place (command line)
+- autopep8 in place
     - PyCharm External Tools: 
         - Programs: autopep8 (C:\Users\User\Anaconda3\Scripts\autopep8.exe)
         - Parameters: --in-place --aggressive --aggressive \$FilePath\$
@@ -200,11 +200,29 @@ Data Scientist Note
             return None  
     ```
 ## Algorithm
+- Multiple "or" conditions
+    ```python
+    x = 10
+    if x > 5 or x < 9:
+        print('x in range')
+    if not 5 < x < 9:
+        print('x not in range')
+    if any([x > 5, x < 9]):
+        print('x in range')
+    ```
+- Create dictionary
+    ```python
+    keys = ['AJ1', '椰子鞋', 'Boost 350']
+    values = ['NIKE', 'ADIDAS', 'ADIDAS']
+    d = dict(zip(keys, values))
+    print(d) # {'AJ1': 'NIKE', '椰子鞋': 'ADIDAS', 'Boost V2': 'ADIDAS'}
+    ```
 - List search
     ```python
     from itertools import izip as zip, count
     [i for i, j in zip(count(), [‘foo’, ‘bar’, ‘baz’]) if j == ‘bar’]
     ```
+
 
 ## Docker
 - build tf enviroment with GPU and Jupyter
@@ -216,3 +234,5 @@ Data Scientist Note
     ```docker
     docker run --runtime=nvidia -it -p 12222:8888 -p 16666:6006 -v "$(pwd)"/torch:/workspace --name howard_torch pytorch/pytorch:1.0-cuda10.0-cudnn7-devel 
     ```
+    
+    
