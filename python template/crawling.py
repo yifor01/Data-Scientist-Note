@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
 plt.rcParams['axes.unicode_minus'] = False
 
+
 def main(show_plot=True):
     print('=== 蘋果今日焦點 ===')
+    # Use request to get html (for general)
     dom = requests.get(
         'http://www.appledaily.com.tw/appledaily/hotdaily/headline')
     try:
@@ -19,8 +21,10 @@ def main(show_plot=True):
                 )
         else:
             print(f'Connect error code: {dom.status_code}')
-    except:
+    except BaseException:
         print('Connect timeout!')
+
+    # Use pandas to get html (for dataframe)
     print('=== 永和明天天氣 ===')
     dom = pd.read_html(
         'https://www.cwb.gov.tw/V8/C/W/Town/MOD/3hr/6500400_3hr_PC.html?T=2020033020-0',
@@ -46,11 +50,21 @@ def main(show_plot=True):
         ax2.plot('日期', '降雨機率', data=dom, label='降雨機率', linestyle='dashed')
         for tick in [x for x in ax2.get_xticklabels()]:
             tick.set_rotation(45)
-        ax1.legend(bbox_to_anchor=(0.01, 0.2), loc='upper left', borderaxespad=0)
-        ax2.legend(bbox_to_anchor=(0.01, 0.1), loc='upper left', borderaxespad=0)
+        ax1.legend(
+            bbox_to_anchor=(
+                0.01,
+                0.2),
+            loc='upper left',
+            borderaxespad=0)
+        ax2.legend(
+            bbox_to_anchor=(
+                0.01,
+                0.1),
+            loc='upper left',
+            borderaxespad=0)
         ax2.set_ylim([0, 1.05])
         plt.show()
 
+
 if __name__ == '__main__':
     main()
-
