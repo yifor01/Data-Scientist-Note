@@ -15,8 +15,6 @@ test_url = r'http://share.dmhy.org/topics/list'
 MAX_PAGE = 30
 
 # method 1
-
-
 def get_web_page(url):
     import requests
     headers = {
@@ -30,8 +28,6 @@ def get_web_page(url):
         return resp.text
 
 # method 2
-
-
 async def send_req(url):
     import requests
     headers = {

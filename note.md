@@ -6,17 +6,18 @@ Data Scientist Note
 :::info
 [TOC]
 :::
+- 文中未特別註明的code block皆為python
 
 ## System
-- 執行command line
+- (python)執行command line
     ```python
     os.system('python main.py --input doc.txt')
     ```
-- 開啟檔案視窗
+- (python)開啟檔案視窗
     ```python
     os.startfile('doc.txt')
     ```
-- UnicodeEncodeError
+- (command)UnicodeEncodeError
     ```python
     PYTHONIOENCODING=utf-8 python [python file]
     ```
@@ -30,7 +31,6 @@ Data Scientist Note
         ```python
         autopep8 --in-place --aggressive --aggressive <filename>
         ```
-    
 
 ## Plot
 - 繪圖區顏色調整(黑暗模式用)
@@ -47,13 +47,54 @@ Data Scientist Note
     plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
     plt.rcParams['axes.unicode_minus'] = False
     ```
-- plt中文亂碼(進階Linux)
-    - [simsun字體下載](http://www.font5.com.cn/zitixiazai/1/150.html)
+- plt中文亂碼(Linux簡易版)
+    - 指定font位置[(simsun字體下載)](http://www.font5.com.cn/zitixiazai/1/150.html)
         ```python
         from matplotlib.font_manager import FontProperties      
       font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=14)
       ```
-      
+- plt中文亂碼(Linux進階版)
+    - (python)查找matplotlib路徑 
+  ```python
+    import matplotlib
+    print(f'matplotlib system path: {matplotlib.__file__}')
+  ```
+    - (command line)將font檔案丟到上面的目錄+"/mpl-data/fonts/ttf"
+    ```os
+    cd [matplotlib path]/mpl-data/fonts/ttf
+    ```
+    - (command line)更改資料權限
+    ```os
+    chmod 755 [font file]
+    ```
+    - (command line)刪除matplotlib快取檔案
+    ```os
+    cd ~/.cache/matplotlib
+    rm -rf *.*
+    ```
+    - (python)查看字型安裝狀況
+    ```python
+    import matplotlib.font_manager
+    ttf_list = sorted([f.name for f in matplotlib.font_manager.fontManager.ttflist])
+
+    for _ttf in ttf_list:
+        print(_ttf)
+    ```
+    - (python)載入字型
+    ```python
+    import matplotlib
+    matplotlib.rcParams[u'font.sans-serif'] = ['Taipei Sans TC Beta']
+    matplotlib.rcParams['axes.unicode_minus'] = False
+    ```
+    - (python)測試
+    ```python
+    plt.plot([1,2,3],[1,2,3])
+    plt.title('測試')
+    ```
+    
+
+
+
 ## Data Frame
 * 簡體編碼 ： `GB 2312`
 - 儲存csv中文亂碼
@@ -61,6 +102,26 @@ Data Scientist Note
     # 僅csv 可用dtype={'A':str}
     df.to_csv('XXXX.csv',encoding='utf_8_sig',index=False)
     df.to_excel('XXXX.xlsx',encoding='utf_8_sig',index=False)
+    ```
+- url 過多導致excel的錯誤 & 檔案切分 & 壓縮多個檔案
+    ```python 
+    import pandas as pd
+    import numpy as np
+    max_output, output_file_name = 1000000, 'testdata'
+    batch_size = int(np.ceil(len(df)/max_output))
+    for batch in batch_size:
+        writer = pd.ExcelWriter(f'{output_file_name}_part{batch+1}.xlsx', 
+                                engine='xlsxwriter',
+                                options={'strings_to_urls': False})
+        df.iloc[(batch)*max_output:(batch+1)*max_output].to_excel(writer, sheet_name='Sheet1')
+        writer.save()
+        
+    import zipfile,os
+    from glob import glob
+    with zipfile.ZipFile(f'{output_file_name}_all.zip', 'w') as zf:
+        for file in glob(f'{output_file_name}_part*.xlsx'):
+            zf.write(file)
+            #os.remove(file)
     ```
 - 特殊符號無法存檔
     ```python
@@ -116,6 +177,7 @@ Data Scientist Note
 
 ## NLP
 #### NLP Reference
+* [NLP repo](https://notebooks.quantumstat.com/?fbclid=IwAR09na0S8ZFIEI6hQASptNAsw29EP6tmkZAiqH-Y6P25487OA9EXOsh2NVM)
 * [PyTorch cheat sheet](https://hackmd.io/@rh0jTfFDTO6SteMDq91tgg/HkDRHKLrU)
 * [PyTorch 中文教程](https://pytorch.apachecn.org/docs/1.2/)
 * [Jieba詞性表](http://blog.pulipuli.info/2017/11/fasttag-identify-part-of-speech-in.html)
@@ -124,6 +186,7 @@ Data Scientist Note
 * [中文任務BERT Pre-Train Model](https://github.com/ymcui/Chinese-BERT-wwm)
 * [BERT colab](https://colab.research.google.com/github/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
 ) (不適用tf2)
+* [同義詞Wordnet](https://blog.csdn.net/Pursue_MyHeart/article/details/80631278)
 
 
 
@@ -155,8 +218,7 @@ Data Scientist Note
     ```python
     def remove_url_text(text):
         results=re.compile("(https://[a-zA-Z0-9.?/&=:]*)|(http://[a-zA-Z0-9.?/&=:]*)",re.S)
-        clean_text = results.sub("",text)
-        return clean_text
+        return results.sub("",text)
     ```
 - 清理文字
     ```python
@@ -164,6 +226,10 @@ Data Scientist Note
         fil = re.compile(r"[^0-9a-zA-Z\u4e00-\u9fa5，：？！。《》()『』「」,。【】▶%＞＜#；+-—“”:?!、<>]+", re.UNICODE)
         return fil.sub(' ', raw)
     ```
+#### Modeling
+- BERT output attention： [Layer(12)][multi-head(12)][sent-dim][sent-dim]
+
+
 ## Crawling
 - 抓取代理伺服器
     ```python
@@ -225,14 +291,13 @@ Data Scientist Note
 
 
 ## Docker
-- build tf enviroment with GPU and Jupyter
+- (command)build tf enviroment with GPU and Jupyter
     ```docker
     docker run --runtime=nvidia -d -p 27390:8888 -v "$(pwd)"/myfile:/tf --name tf_rnn tensorflow/tensorflow:latest-gpu-py3-jupyter 
     docker exec tf_rnn jupyter notebook list # get jupyter token
     ```
-- build pytorch enviroment with GPU
+- (command)build pytorch enviroment with GPU
     ```docker
     docker run --runtime=nvidia -it -p 12222:8888 -p 16666:6006 -v "$(pwd)"/torch:/workspace --name howard_torch pytorch/pytorch:1.0-cuda10.0-cudnn7-devel 
     ```
-    
-    
+ 
