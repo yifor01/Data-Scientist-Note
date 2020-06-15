@@ -36,7 +36,7 @@ Data Scientist Note
 - 繪圖區顏色調整(黑暗模式用)
     ```python
      plt.rc_context({'axes.edgecolor':'orange','xtick.color':'red', 
-                        'ytick.color':'green', 'figure.facecolor':'white'})
+                     'ytick.color':'green', 'figure.facecolor':'white'})
     ```
 - 座標label旋轉
   ```python
