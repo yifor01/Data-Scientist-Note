@@ -9,6 +9,8 @@ Data Scientist Note
 - 文中未特別註明的code block皆為python
 
 ## System
+- Python Reference
+    - [Decorator](https://www.youtube.com/watch?v=5VCywjS8YEA&list=PLLuMmzMTgVK7JciUiAB8hcGA_9fQCQPlE&index=3)
 - (python)執行command line
     ```python
     os.system('python main.py --input doc.txt')
@@ -36,7 +38,7 @@ Data Scientist Note
 - 繪圖區顏色調整(黑暗模式用)
     ```python
      plt.rc_context({'axes.edgecolor':'orange','xtick.color':'red', 
-                     'ytick.color':'green', 'figure.facecolor':'white'})
+                        'ytick.color':'green', 'figure.facecolor':'white'})
     ```
 - 座標label旋轉
   ```python
@@ -99,7 +101,7 @@ Data Scientist Note
 * 簡體編碼 ： `GB 2312`
 - 儲存csv中文亂碼
     ```python
-    # 僅csv 可用dtype={'A':str}
+    # 僅read csv 可用dtype={'A':str}
     df.to_csv('XXXX.csv',encoding='utf_8_sig',index=False)
     df.to_excel('XXXX.xlsx',encoding='utf_8_sig',index=False)
     ```
@@ -122,6 +124,14 @@ Data Scientist Note
         for file in glob(f'{output_file_name}_part*.xlsx'):
             zf.write(file)
             #os.remove(file)
+    ```
+- excel 儲存多個sheet
+    ```python
+    writer = pd.ExcelWriter('df.xlsx', engine = 'xlsxwriter')
+    df1.to_excel(writer, sheet_name = 'sheet1',index=0)
+    df2.to_excel(writer, sheet_name = 'sheet2',index=0)
+    writer.save()
+    writer.close()
     ```
 - 特殊符號無法存檔
     ```python
@@ -187,8 +197,8 @@ Data Scientist Note
 * [BERT colab](https://colab.research.google.com/github/google-research/bert/blob/master/predicting_movie_reviews_with_bert_on_tf_hub.ipynb
 ) (不適用tf2)
 * [同義詞Wordnet](https://blog.csdn.net/Pursue_MyHeart/article/details/80631278)
-
-
+* [正規表達式教學](https://cloud.tencent.com/developer/article/1597800)
+* [UTF8編碼](https://blog.miniasp.com/post/2019/01/02/Common-Regex-patterns-for-Unicode-characters)
 
 #### Data Processing
 - 全形轉半形
@@ -223,7 +233,7 @@ Data Scientist Note
 - 清理文字
     ```python
     def clean_txt(raw):
-        fil = re.compile(r"[^0-9a-zA-Z\u4e00-\u9fa5，：？！。《》()『』「」,。【】▶%＞＜#；+-—“”:?!、<>]+", re.UNICODE)
+        fil = re.compile(r"[^0-9a-zA-Z\u4E00-\u9FFF，：？！。《》()『』「」,。【】▶%＞＜#；+-—“”:?!、<>]+", re.UNICODE)
         return fil.sub(' ', raw)
     ```
 #### Modeling
@@ -231,7 +241,7 @@ Data Scientist Note
 
 
 ## Crawling
-- 抓取代理伺服器
+- 抓取代理伺服器 (以 http://cn-proxy.com/archives/218 為例)
     ```python
     import requests
     from bs4 import BeautifulSoup
@@ -286,7 +296,12 @@ Data Scientist Note
 - List search
     ```python
     from itertools import izip as zip, count
-    [i for i, j in zip(count(), [‘foo’, ‘bar’, ‘baz’]) if j == ‘bar’]
+    [i for i, j in zip(count(), ['foo', 'bar', 'baz']) if j == 'bar']
+    ```
+- str2list
+    ```python
+    txt_list = u"['理財', '基金', '量化', '交易']"
+    eval(txt_list) # ['理財', '基金', '量化', '交易']
     ```
 
 
@@ -300,4 +315,8 @@ Data Scientist Note
     ```docker
     docker run --runtime=nvidia -it -p 12222:8888 -p 16666:6006 -v "$(pwd)"/torch:/workspace --name howard_torch pytorch/pytorch:1.0-cuda10.0-cudnn7-devel 
     ```
- 
+- (command)docker install jupyter 
+    ```docker
+    pip install --user jupyter && pip install jupyter_contrib_nbextensions && jupyter contrib nbextension install
+    jupyter notebook --ip 0.0.0.0 --no-browser --allow-root 
+    ```
